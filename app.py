@@ -8,6 +8,7 @@ import base64
 from io import BytesIO
 from gtts import gTTS
 import re
+import json
 
 app = Flask(__name__)
 
@@ -15,15 +16,21 @@ app = Flask(__name__)
 TWILIO_SID = os.environ.get("TWILIO_SID")
 TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
 TWILIO_PHONE_NUMBER = os.environ.get("TWILIO_PHONE_NUMBER")
-SERVICE_ACCOUNT_FILE = "token.json"
-YOUR_CALENDAR_ID = "milisha058@gmail.com"  # replace if needed
+YOUR_CALENDAR_ID = "milisha058@gmail.com"  # Replace with your actual calendar ID
+
+# ✅ GOOGLE SERVICE ACCOUNT AUTH via ENVIRONMENT VARIABLE
+service_json = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+if not service_json:
+    raise RuntimeError("Missing GOOGLE_SERVICE_ACCOUNT_JSON env variable")
+
+info = json.loads(service_json)
+creds = service_account.Credentials.from_service_account_info(
+    info, scopes=["https://www.googleapis.com/auth/calendar"]
+)
+calendar_service = build("calendar", "v3", credentials=creds)
 
 # 📞 INIT
 twilio_client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
-creds = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=["https://www.googleapis.com/auth/calendar"]
-)
-calendar_service = build("calendar", "v3", credentials=creds)
 
 # 🧠 Dummy LLM
 def query_gemma(prompt):
@@ -92,7 +99,8 @@ def parse_and_execute(instruction):
     tasks = [t.strip() for t in re.split(r'\band\b|\n|,', instruction, flags=re.IGNORECASE) if t.strip()]
 
     for task in tasks:
-        if not task: continue
+        if not task:
+            continue
 
         # 🔍 Search
         search_match = re.search(r'find providers for (.+)', task, re.IGNORECASE)
