@@ -13,6 +13,8 @@ With a sleek animated UI, particle backgrounds, and avatar integration, it bring
 
 ## 🎥 Demo Preview
 
+![WhatsApp Image 2025-06-25 at 09 39 38_8cd6ee08](https://github.com/user-attachments/assets/48809a9c-1726-4e85-b699-6f4b12fcf037)
+![WhatsApp Image 2025-06-25 at 09 39 54_15bca12a](https://github.com/user-attachments/assets/cae0a38f-d288-4f34-a9ba-ef0d4f8ad52f)
 
 ## 🚀 Features
 
